@@ -29,16 +29,24 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            fetch('https://daniel-todo.ct.ws/backend/login.php', {
+            fetch('https://yourdomain.free.nf/backend/login.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ username, password })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
+                    // Store user data in localStorage
+                    localStorage.setItem('user_id', data.user_id);
+                    localStorage.setItem('username', data.username);
                     window.location.href = 'todo.html';
                 } else {
                     const messageEl = document.getElementById('message');
@@ -49,7 +57,7 @@
             .catch(error => {
                 console.error('Error:', error);
                 const messageEl = document.getElementById('message');
-                messageEl.textContent = 'An error occurred during login';
+                messageEl.textContent = 'An error occurred during login. Please try again.';
                 messageEl.style.color = 'red';
             });
         });
